@@ -44,7 +44,6 @@ func main() {
 	for _, page := range config.Pages {
 		wg.Add(1)
 		go scrapeProductNames(page, config.ProxyURLs, products, &wg)
-		time.Sleep(120 * time.Second)
 	}
 
 	go func() {
@@ -91,8 +90,8 @@ func scrapeProductNames(page Page, proxyURLs []string, products chan<- string, w
 	c.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 5,
-		Delay:       620 * time.Millisecond, // Base delay of 750 ms
-		RandomDelay: 1000 * time.Millisecond, // Random delay up to 2000 ms
+		Delay:       500 * time.Millisecond, // Base delay of 500 ms
+		RandomDelay: 1000 * time.Millisecond, // Random delay up to 1000 ms
 	})
 
 	c.OnError(func (r *colly.Response, e error) {
@@ -103,7 +102,7 @@ func scrapeProductNames(page Page, proxyURLs []string, products chan<- string, w
 		retryCount++
 		log.Printf("Current success/retry count : %d/%d", successfulCount, retryCount)
 		retryCountMutex.Unlock()
-		time.Sleep(time.Duration(rand.Intn(120)+75) * time.Second)
+		time.Sleep(time.Duration(rand.Intn(30)+30) * time.Second)
 		r.Request.Retry()
 	})
 
