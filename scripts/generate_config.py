@@ -27,9 +27,6 @@ if __name__ == "__main__":
     with ThreadPoolExecutor() as executor:
         results = executor.map(get_page_count, urls)
 
-    with open('proxies.txt', 'r') as file:
-        proxies = file.read().splitlines()
-
-    data = {"proxies": proxies, "pages": list(results)}
+    data = {"pages": list(results)}
     with open('config.json', 'w') as f:
         json.dump(data, f, indent=2)
